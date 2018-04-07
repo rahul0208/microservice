@@ -34,7 +34,7 @@ import static org.assertj.core.api.BDDAssertions.then;
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource(properties = {"management.port=0"})
-public class HelloWorldApplicationTests {
+public class PersonReaderApplicationTests {
 
 	@LocalServerPort
 	private int port;
@@ -44,15 +44,6 @@ public class HelloWorldApplicationTests {
 
 	@Autowired
 	private TestRestTemplate testRestTemplate;
-
-	@Test
-	public void shouldReturn200WhenSendingRequestToController() throws Exception {
-		@SuppressWarnings("rawtypes")
-		ResponseEntity<Map> entity = this.testRestTemplate.getForEntity(
-				"http://localhost:" + this.port + "/hello-world", Map.class);
-
-		then(entity.getStatusCode()).isEqualTo(HttpStatus.OK);
-	}
 
 	@Test
 	public void shouldReturn200WhenSendingRequestToManagementEndpoint() throws Exception {
