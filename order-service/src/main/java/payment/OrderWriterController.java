@@ -4,13 +4,16 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import domain.Constants;
 import domain.Item;
 import domain.Order;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
 
@@ -19,16 +22,20 @@ public class OrderWriterController {
 
     @Resource
     RabbitTemplate rabbitTemplate;
-    private final AtomicLong counter = new AtomicLong();
+
+    @Resource
+    IdService idService;
+
     private Map<Long, Order> orderStore = new HashMap<>();
 
     @PostMapping("/create")
     @ResponseBody
-    public Long createOrder(@RequestParam(name = "desc") String desc) {
-        Order order = new Order(counter.incrementAndGet());
+    public String createOrder(@RequestParam(name = "desc") String desc) {
+        Long id = idService.generateId();
+        Order order = new Order(id);
         order.setDescription(desc);
         orderStore.put(order.getId(), order);
-        return order.getId();
+        return order.getId().toString();
     }
 
     @PostMapping("/add-item/{id}")
@@ -44,4 +51,8 @@ public class OrderWriterController {
         rabbitTemplate.convertAndSend(Constants.orderExchangeName, Constants.paymentRouteKey + order.getId(), order);
         return order;
     }
+
+
 }
+
+
