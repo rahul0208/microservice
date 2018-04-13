@@ -8,6 +8,9 @@ import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import domain.Constants;
 import domain.Item;
 import domain.Order;
+import org.apache.commons.logging.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
@@ -19,7 +22,7 @@ import javax.annotation.Resource;
 
 @Controller
 public class OrderWriterController {
-
+    private static final Logger LOG = LoggerFactory.getLogger(OrderWriterController.class);
     @Resource
     RabbitTemplate rabbitTemplate;
 
@@ -31,6 +34,7 @@ public class OrderWriterController {
     @PostMapping("/create")
     @ResponseBody
     public String createOrder(@RequestParam(name = "desc") String desc) {
+        LOG.info("calling home");
         Long id = idService.generateId();
         Order order = new Order(id);
         order.setDescription(desc);

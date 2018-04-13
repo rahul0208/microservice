@@ -25,7 +25,7 @@ public class PaymentController {
 
     @PostMapping("/pay/{orderId}")
     @ResponseBody
-    public String payOrder(@PathVariable Integer orderId, @RequestAttribute Long paymentId, @RequestAttribute Double paymentValue) {
+    public String payOrder(@PathVariable Long orderId, @RequestAttribute Long paymentId, @RequestAttribute Double paymentValue) {
         for (Order order : registry.getOrders()) {
             if (order.getId().equals(orderId) && order.getTotalCost().equals(paymentValue)) {
                 payments.add(new Payment(paymentId,order,paymentValue));
